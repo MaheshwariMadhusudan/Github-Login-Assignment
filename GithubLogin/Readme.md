@@ -15,14 +15,23 @@ This README would normally document whatever steps are necessary to get your app
 - XCode > 9
 - JDK > 8
 - Android Studio and Android SDK
+- React-Navigation @5x.
 
-### Poject setup and running on android
+### Poject setup -
 
-After cloning the project run the following commands - >> cd go-konnect-mobile-app >> yarn install >> react-native run-android
+Step1 - Clone the repository.
+Step2 - Get into the GithubLogin project directory.
+Step3 - Create a .env file which has the keys present in .env.example and fill the values from your OAuth github app.
+Step4. - Run the command in root folder - yarn install
+Step4. - Run the command in root folder - cd ios && pod install (To install pods for iOS project.)
+
+### Running on android -
+
+Run the following script - >> yarn android
 
 ### Poject setup and running on iOS
 
-After cloning the project run the following commands - >> cd gokonnect-mobile-app >> yarn install >> cd ios && pod install >> react-native run-ios
+Run the following script - >> yarn ios
 
 ### Who do I talk to?
 
