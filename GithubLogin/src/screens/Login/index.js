@@ -38,12 +38,18 @@ const Login = props => {
         redirect_uri: Environment.APP_REDIRECT_URI,
         code: userCode,
       };
-      axios.post(`${Environment.BASE_URL}access_token`, body).then(response => {
-        const accessTokenObject = response.data.split('&')[0];
-        const accessToken = accessTokenObject.split('=')[1];
-        setAsyncStorage('authToken', accessToken);
-        setAccessToken(accessToken);
-      });
+      const headers = {
+        Accept: 'application/json',
+      };
+      axios
+        .post(`${Environment.BASE_URL}access_token`, body, {
+          headers: headers,
+        })
+        .then(response => {
+          const token = response.data.access_token;
+          setAsyncStorage('authToken', token);
+          setAccessToken(token);
+        });
     }
   }, [userCode]);
 

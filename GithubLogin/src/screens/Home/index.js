@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   Image,
 } from 'react-native';
+import axios from 'axios';
 import {
   fontSize,
   fonts,
@@ -15,14 +16,45 @@ import {
   rgbaColor,
   scales,
 } from '../../constants/appStyles';
+import Header from '../../components/Header';
+import {useUserInfo} from '../../contexts/userInfo';
+import ProfileImage from '../../components/ProfileImage';
 
 const Home = props => {
   const {navigation} = props;
+  const {userCode, setUserCode, accessToken, setAccessToken} = useUserInfo();
+  const [profileDetails, setProfileDetails] = useState({});
+
+  useEffect(() => {
+    const headers = {
+      Accept: 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    };
+    axios
+      .get(`https://api.github.com/user`, {
+        headers: headers,
+      })
+      .then(response => {
+        setProfileDetails(response.data);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <View>
-        <Text>Home Screen</Text>
+        <Header title="Profile" showBackButton={false} />
+        <View style={styles.profileContainer}>
+          <View>
+            <ProfileImage imageUrl={profileDetails.avatar_url} />
+          </View>
+          <View style={styles.infoContainer}>
+            <Text style={styles.userNameContainer}>{profileDetails.login}</Text>
+            <Text>{profileDetails.name}</Text>
+          </View>
+        </View>
       </View>
     </SafeAreaView>
   );
@@ -33,76 +65,24 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  tabViewContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    marginTop: spacing(12),
-    borderBottomWidth: scales(1),
-  },
-  tabContainer: {
-    alignItems: 'center',
-    width: '33.33%',
-  },
-  tabText: {
-    color: rgbaColor.greyTwo,
-    fontFamily: fonts.WorkSansRegular,
-    fontSize: fontSize(16),
-  },
-  tabTextSelected: {
-    color: colors.white,
-    fontFamily: fonts.WorkSansRegular,
-    fontSize: fontSize(16),
-  },
-  tab: {
-    paddingVertical: spacing(12),
-    width: '100%',
-    alignItems: 'center',
-  },
-  tabSelected: {
-    paddingVertical: spacing(12),
-    width: '100%',
-    alignItems: 'center',
-    borderBottomWidth: scales(1),
-    borderBottomColor: colors.greenOne,
-  },
-  buttonOneContainer: {
-    marginBottom: spacing(15),
-  },
-  buttonTwoContainer: {
-    marginBottom: spacing(30),
-  },
-  labelStyles: {
-    color: colors.greenOne,
-  },
-  buttonStyles: {
-    backgroundColor: rgbaColor.greyOne,
-    borderColor: colors.greenOne,
+  profileContainer: {
+    width: '90%',
+    alignSelf: 'center',
+    height: scales(100),
     borderWidth: scales(1),
-  },
-  bottomSheetBodyContainer: {
+    borderRadius: scales(5),
+    borderColor: colors.greyOne,
+    marginTop: spacing(20),
+    padding: spacing(2),
     flexDirection: 'row',
-    marginBottom: spacing(25),
-    marginHorizontal: spacing(15),
     alignItems: 'center',
-    width: '100%',
   },
-  bottomSheetImageContainer: {
-    height: scales(40),
-    width: scales(40),
-    marginRight: spacing(15),
+  infoContainer: {
+    marginLeft: spacing(10),
   },
-  bottomSheetTextContent: {
-    color: rgbaColor.greyTwo,
+  userNameContainer: {
+    fontWeight: '700',
     fontSize: fontSize(18),
-    fontFamily: fonts.WorkSansRegular,
-    maxWidth: '90%',
-  },
-  bottomSheetLink: {
-    color: colors.greenOne,
-    fontSize: fontSize(18),
-    fontFamily: fonts.WorkSansRegular,
-    textDecorationLine: 'underline',
-    textDecorationColor: colors.greenOne,
   },
 });
 
