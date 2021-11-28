@@ -16,6 +16,7 @@ This README would normally document whatever steps are necessary to get your app
 - JDK > 8
 - Android Studio and Android SDK
 - React-Navigation @5x.
+- axios - for api calls.
 
 ### Poject setup -
 
