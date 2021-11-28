@@ -11,42 +11,9 @@ export const colors = {
   // exporting colors with hexadecimal codes
   primary: '#007F80',
   greyOne: '#668f9bb3',
-  blackOne: '#0c0f18',
   white: '#FFFFFF',
   black: 'black',
-  greyTwo: '#8f9bb3',
-  redOne: '#99d2283a',
-  greenOne: '#63a344',
-  redTwo: '#d2283a',
-  greyThree: '#1d2029',
-  greyFour: '#57627b',
-  blackTwo: '#1d2029',
-  greyFive: '#40060b19',
   greyBlue: '#060819',
-  blackTranslucent: '#00000073',
-  redThree: '#BC1324',
-};
-
-export const rgbaColor = {
-  // exporting colors with rgba codes
-  borderDarkGrey: '255,0,0',
-  greyOne: 'rgb(29,32,41)',
-  greyTwo: 'rgb(143,155,179)',
-  greyAlpha: 'rgba(6,11,25,25)',
-  blueGrey: 'rgba(143,155,179,0.4)',
-  greyThree: 'rgb(87,98,123)',
-  greyBlue: 'rgba(143,155,179,0.33)',
-  greyBlueTwo: 'rgb(143,155,179)',
-  white: 'rgb(255,255,255)',
-  blackOne: 'rgb(12,15,24)',
-};
-
-export const fonts = {
-  // exporting fonts used in the project
-  SyneMedium: 'Syne-Medium',
-  WorkSansBold: 'WorkSans-Bold',
-  WorkSansMedium: 'WorkSans-Medium',
-  WorkSansRegular: 'WorkSans-Regular',
 };
 
 export const isIphoneX = () => {

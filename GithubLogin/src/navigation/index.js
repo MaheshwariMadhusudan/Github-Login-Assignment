@@ -3,7 +3,9 @@ import {getAsyncStorage} from '../utils/asyncStorage';
 import {createStackNavigator} from '@react-navigation/stack';
 import {NavigationContainer} from '@react-navigation/native';
 import Login from '../screens/Login';
-import Home from '../screens/Home';
+import Profile from '../screens/Profile';
+import Repos from '../screens/Repos';
+import FAQs from '../screens/FAQs';
 import {useUserInfo} from '../contexts/userInfo';
 
 const Stack = createStackNavigator();
@@ -31,7 +33,7 @@ const RouteStack = ({navigation}) => {
   const {accessToken, setLoggedIn, isLoggedIn} = useUserInfo();
 
   useEffect(() => {
-    if (accessToken.length > 0) {
+    if (accessToken && accessToken.length > 0) {
       setLoggedIn(true);
     }
   }, [accessToken]);
@@ -40,11 +42,14 @@ const RouteStack = ({navigation}) => {
     <Stack.Navigator headerMode="none">
       {isLoggedIn ? (
         <>
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Profile" component={Profile} />
+          <Stack.Screen name="Repos" component={Repos} />
+          <Stack.Screen name="FAQs" component={FAQs} />
         </>
       ) : (
         <>
           <Stack.Screen name="Login" component={Login} />
+          <Stack.Screen name="FAQs" component={FAQs} />
         </>
       )}
     </Stack.Navigator>

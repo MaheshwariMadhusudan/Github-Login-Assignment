@@ -8,6 +8,12 @@ const UserInfoProvider = props => {
   const [accessToken, setAccessToken] = useState('');
   const [isLoggedIn, setLoggedIn] = useState(false);
 
+  const clearUserInfo = () => {
+    setUserCode('');
+    setAccessToken('');
+    setLoggedIn('');
+  };
+
   const values = {
     userCode,
     setUserCode,
@@ -15,6 +21,7 @@ const UserInfoProvider = props => {
     setAccessToken,
     isLoggedIn,
     setLoggedIn,
+    clearUserInfo,
   };
 
   return (

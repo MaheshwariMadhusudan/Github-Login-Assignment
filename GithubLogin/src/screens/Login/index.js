@@ -1,34 +1,17 @@
-import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  View,
-  TouchableOpacity,
-  Text,
-  SafeAreaView,
-  Image,
-} from 'react-native';
+import React, {useEffect} from 'react';
+import {StyleSheet, TouchableOpacity, Text, SafeAreaView} from 'react-native';
 import axios from 'axios';
 import {WebView} from 'react-native-webview';
-import {useIsFocused} from '@react-navigation/native';
-import {
-  fontSize,
-  fonts,
-  colors,
-  spacing,
-  rgbaColor,
-  scales,
-} from '../../constants/appStyles';
-import {
-  setAsyncStorage,
-  getAsyncStorage,
-  clearAsyncStorage,
-} from '../../utils/asyncStorage';
+import {fontSize, colors, spacing} from '../../constants/appStyles';
+import {setAsyncStorage} from '../../utils/asyncStorage';
 import {useUserInfo} from '../../contexts/userInfo';
 import Environment from '../../config/environment';
+import Toast from 'react-native-simple-toast';
+import Header from '../../components/Header';
 
 const Login = props => {
   const {navigation} = props;
-  const {userCode, setUserCode, accessToken, setAccessToken} = useUserInfo();
+  const {userCode, setUserCode, setAccessToken} = useUserInfo();
 
   useEffect(() => {
     if (userCode) {
@@ -42,24 +25,26 @@ const Login = props => {
         Accept: 'application/json',
       };
       axios
-        .post(`${Environment.BASE_URL}access_token`, body, {
+        .post(`${Environment.BASE_URL}login/oauth/access_token`, body, {
           headers: headers,
         })
         .then(response => {
-          const token = response.data.access_token;
+          const token = response.data && response.data.access_token;
           setAsyncStorage('authToken', token);
           setAccessToken(token);
+          Toast.show('Logged In Successfully');
         });
     }
   }, [userCode]);
 
   return (
     <SafeAreaView style={styles.container}>
+      <Header title="Login" showBackButton={false} />
       <WebView
         source={{
-          uri: `${Environment.BASE_URL}authorize?scope=user&client_id=${Environment.APP_CLIENT_ID}`,
+          uri: `${Environment.BASE_URL}login/oauth/authorize?scope=user&client_id=${Environment.APP_CLIENT_ID}`,
         }}
-        style={{marginTop: 20, height: 20, width: '100%'}}
+        style={styles.webviewStyles}
         onNavigationStateChange={navState => {
           if (navState.url.includes('code')) {
             const code = navState.url.split('code=')[1];
@@ -68,7 +53,13 @@ const Login = props => {
           // Keep track of going back navigation within component
           // this.canGoBack = navState.canGoBack;
         }}
+        incognito
       />
+      <TouchableOpacity
+        style={styles.menuStyle}
+        onPress={() => navigation.navigate('FAQs')}>
+        <Text style={styles.bottomSheetLink}>FAQs</Text>
+      </TouchableOpacity>
     </SafeAreaView>
   );
 };
@@ -78,77 +69,18 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
   },
-  tabViewContainer: {
-    flexDirection: 'row',
-    justifyContent: 'center',
+  menuStyle: {
     marginTop: spacing(12),
-    borderBottomWidth: scales(1),
-  },
-  tabContainer: {
-    alignItems: 'center',
-    width: '33.33%',
-  },
-  tabText: {
-    color: rgbaColor.greyTwo,
-    fontFamily: fonts.WorkSansRegular,
-    fontSize: fontSize(16),
-  },
-  tabTextSelected: {
-    color: colors.white,
-    fontFamily: fonts.WorkSansRegular,
-    fontSize: fontSize(16),
-  },
-  tab: {
-    paddingVertical: spacing(12),
-    width: '100%',
-    alignItems: 'center',
-  },
-  tabSelected: {
-    paddingVertical: spacing(12),
-    width: '100%',
-    alignItems: 'center',
-    borderBottomWidth: scales(1),
-    borderBottomColor: colors.greenOne,
-  },
-  buttonOneContainer: {
-    marginBottom: spacing(15),
-  },
-  buttonTwoContainer: {
-    marginBottom: spacing(30),
-  },
-  labelStyles: {
-    color: colors.greenOne,
-  },
-  buttonStyles: {
-    backgroundColor: rgbaColor.greyOne,
-    borderColor: colors.greenOne,
-    borderWidth: scales(1),
-  },
-  bottomSheetBodyContainer: {
-    flexDirection: 'row',
-    marginBottom: spacing(25),
-    marginHorizontal: spacing(15),
-    alignItems: 'center',
-    width: '100%',
-  },
-  bottomSheetImageContainer: {
-    height: scales(40),
-    width: scales(40),
-    marginRight: spacing(15),
-  },
-  bottomSheetTextContent: {
-    color: rgbaColor.greyTwo,
-    fontSize: fontSize(18),
-    fontFamily: fonts.WorkSansRegular,
-    maxWidth: '90%',
+    marginRight: spacing(12),
+    alignSelf: 'flex-end',
   },
   bottomSheetLink: {
-    color: colors.greenOne,
+    color: colors.primary,
     fontSize: fontSize(18),
-    fontFamily: fonts.WorkSansRegular,
     textDecorationLine: 'underline',
-    textDecorationColor: colors.greenOne,
+    textDecorationColor: colors.primary,
   },
+  webviewStyles: {marginTop: spacing(20), height: '30%', width: '100%'},
 });
 
 export default Login;
