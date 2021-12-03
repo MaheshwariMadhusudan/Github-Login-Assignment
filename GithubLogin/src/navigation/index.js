@@ -6,6 +6,7 @@ import Login from '../screens/Login';
 import Profile from '../screens/Profile';
 import Repos from '../screens/Repos';
 import FAQs from '../screens/FAQs';
+import AddRepos from '../screens/AddRepos';
 import {useUserInfo} from '../contexts/userInfo';
 
 const Stack = createStackNavigator();
@@ -45,6 +46,7 @@ const RouteStack = ({navigation}) => {
           <Stack.Screen name="Profile" component={Profile} />
           <Stack.Screen name="Repos" component={Repos} />
           <Stack.Screen name="FAQs" component={FAQs} />
+          <Stack.Screen name="AddRepos" component={AddRepos} />
         </>
       ) : (
         <>

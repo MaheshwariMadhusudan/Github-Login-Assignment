@@ -6,19 +6,17 @@ import {
   Text,
   SafeAreaView,
   FlatList,
+  Image,
+  Alert,
 } from 'react-native';
+import {useIsFocused} from '@react-navigation/native';
 import axios from 'axios';
-import {
-  fontSize,
-  fonts,
-  colors,
-  spacing,
-  scales,
-} from '../../constants/appStyles';
+import {fontSize, colors, spacing, scales} from '../../constants/appStyles';
 import {useUserInfo} from '../../contexts/userInfo';
 import Environment from '../../config/environment';
 import Header from '../../components/Header';
 import Loader from '../../components/Loader';
+import {addIcon} from '../../../assets';
 
 const months = [
   'Jan',
@@ -50,13 +48,26 @@ const Repos = props => {
   const {navigation} = props;
   const {accessToken} = useUserInfo();
   const [reposList, setReposList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getRepoData(1);
   }, []);
 
+  const focused = useIsFocused();
+
+  useEffect(() => {
+    if (focused) {
+      getRepoData(1);
+    } else {
+      currentPage = 1;
+      setReposList([]);
+      setLoading(false);
+    }
+  }, [focused]);
+
   const getRepoData = pageNumber => {
+    setLoading(true);
     const headers = {
       Accept: 'application/json',
       Authorization: `Bearer ${accessToken}`,
@@ -70,10 +81,14 @@ const Repos = props => {
       )
       .then(response => {
         setReposList(response.data);
-        setLoading(false);
       })
       .catch(err => {
-        console.log(err);
+        Alert.alert('Error!', JSON.stringify(err.message), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      })
+      .finally(() => {
+        setLoading(false);
       });
   };
 
@@ -134,9 +149,19 @@ const Repos = props => {
   };
 
   const EmptyListComponent = () => {
+    if (loading) {
+      return (
+        <View style={styles.listEmptyContainer}>
+          <Loader color={colors.primary} />
+        </View>
+      );
+    }
+
     return (
-      <View>
-        <Text>No Data</Text>
+      <View style={styles.listEmptyContainer}>
+        <View style={styles.listEmptyComponent}>
+          <Text style={styles.emptyTextComponent}>No data to show</Text>
+        </View>
       </View>
     );
   };
@@ -145,20 +170,21 @@ const Repos = props => {
     <SafeAreaView style={styles.container}>
       <Header title="Repos" onBackPress={() => navigation.goBack()} />
       <View style={styles.reposListContainer}>
-        {loading ? (
-          <View style={styles.loaderContainer}>
-            <Loader color={colors.primary} />
-          </View>
-        ) : (
-          <FlatList
-            keyExtractor={item => item.id}
-            data={reposList}
-            renderItem={({item}) => <ListItem item={item} />}
-            ListEmptyComponent={EmptyListComponent}
-            ListFooterComponent={renderFooter}
-            ListFooterComponentStyle={styles.footerContainer}
-          />
-        )}
+        <FlatList
+          keyExtractor={item => item.id}
+          data={reposList}
+          renderItem={({item}) => <ListItem item={item} />}
+          ListEmptyComponent={EmptyListComponent}
+          ListFooterComponent={renderFooter}
+          ListFooterComponentStyle={styles.footerContainer}
+        />
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate('AddRepos');
+          }}
+          style={styles.addIconContainer}>
+          <Image source={addIcon} resizeMode="contain" style={styles.addIcon} />
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );
@@ -240,6 +266,38 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginTop: spacing(10),
     flex: 1,
+  },
+  addIconContainer: {
+    position: 'absolute',
+    height: scales(40),
+    width: scales(40),
+    borderRadius: scales(20),
+    right: 0,
+    bottom: spacing(20),
+  },
+  addIcon: {
+    height: '100%',
+    width: '100%',
+    borderRadius: scales(20),
+  },
+  listEmptyContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: scales(400),
+  },
+  listEmptyComponent: {
+    borderRadius: scales(10),
+    borderWidth: scales(1),
+    borderColor: colors.greyOne,
+    height: '50%',
+    width: '90%',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  emptyTextComponent: {
+    fontSize: fontSize(30),
+    color: colors.greyOne,
   },
 });
 

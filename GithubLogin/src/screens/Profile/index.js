@@ -34,11 +34,14 @@ const Profile = props => {
       })
       .then(response => {
         setProfileDetails(response.data);
-        setLoading(false);
       })
       .catch(err => {
+        Alert.alert('Error!', JSON.stringify(err.message), [
+          {text: 'OK', onPress: () => {}},
+        ]);
+      })
+      .finally(() => {
         setLoading(false);
-        console.log(err);
       });
   }, []);
 
@@ -67,47 +70,51 @@ const Profile = props => {
     );
   };
 
-  if (loading) {
-    <View style={styles.loaderContainer}>
-      <Loader color={colors.primary} />
-    </View>;
-  }
-
   return (
     <SafeAreaView style={styles.container}>
       <Header title="Profile" showBackButton={false} />
-      <View style={styles.profileContainer}>
-        <View>
-          <ProfileImage imageUrl={profileDetails.avatar_url} />
+      {loading ? (
+        <View style={styles.loaderContainer}>
+          <Loader color={colors.primary} />
         </View>
-        <View style={styles.infoContainer}>
-          <Text style={styles.userNameContainer}>{profileDetails.login}</Text>
-          <Text style={styles.fullName}>{profileDetails.name}</Text>
-        </View>
-      </View>
-      <View style={styles.listContainer}>
-        <TouchableOpacity
-          style={styles.menuStyle}
-          onPress={() => navigation.navigate('Repos')}>
-          <Text style={styles.bottomSheetLink}>Repos</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuStyle}
-          onPress={() =>
-            navigation.navigate('FAQs', {
-              profileDetails: profileDetails,
-            })
-          }>
-          <Text style={styles.bottomSheetLink}>FAQs</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.menuStyle}
-          onPress={() => {
-            onPressLogout();
-          }}>
-          <Text style={styles.bottomSheetLink}>Logout</Text>
-        </TouchableOpacity>
-      </View>
+      ) : (
+        <>
+          <View style={styles.profileContainer}>
+            <View>
+              <ProfileImage imageUrl={profileDetails.avatar_url} />
+            </View>
+            <View style={styles.infoContainer}>
+              <Text style={styles.userNameContainer}>
+                {profileDetails.login}
+              </Text>
+              <Text style={styles.fullName}>{profileDetails.name}</Text>
+            </View>
+          </View>
+          <View style={styles.listContainer}>
+            <TouchableOpacity
+              style={styles.menuStyle}
+              onPress={() => navigation.navigate('Repos')}>
+              <Text style={styles.bottomSheetLink}>Repos</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuStyle}
+              onPress={() =>
+                navigation.navigate('FAQs', {
+                  profileDetails: profileDetails,
+                })
+              }>
+              <Text style={styles.bottomSheetLink}>FAQs</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.menuStyle}
+              onPress={() => {
+                onPressLogout();
+              }}>
+              <Text style={styles.bottomSheetLink}>Logout</Text>
+            </TouchableOpacity>
+          </View>
+        </>
+      )}
     </SafeAreaView>
   );
 };

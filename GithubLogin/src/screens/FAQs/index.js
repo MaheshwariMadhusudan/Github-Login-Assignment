@@ -50,11 +50,8 @@ const FAQs = props => {
     <SafeAreaView style={styles.container}>
       <Header title="FAQs" onBackPress={() => navigation.goBack()} />
       <View style={styles.faqContainer}>
-        {isLoggedIn ? (
-          <ProfileLinkText />
-        ) : (
-          <Text style={styles.faqText}>{FaqText}</Text>
-        )}
+        <Text style={styles.faqText}>{FaqText}</Text>
+        {isLoggedIn && <ProfileLinkText />}
       </View>
     </SafeAreaView>
   );
@@ -77,12 +74,10 @@ const styles = StyleSheet.create({
     textDecorationColor: colors.primary,
   },
   faqText: {
-    color: colors.primary,
+    color: colors.black,
     fontSize: fontSize(18),
     textDecorationColor: colors.primary,
   },
 });
 
 export default FAQs;
-
-// https://github.com/{login} =
